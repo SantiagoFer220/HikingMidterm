@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        defPos = transform.position;
     }
 
     // Update is called once per frame
@@ -68,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit ray2 = new RaycastHit();
 
 
-        if ( Physics.Raycast(rayLeft, out ray, 0.51f)|| Physics.Raycast(rayRight, out ray2, 0.51f))
+        if ( Physics.Raycast(rayLeft, out ray, 0.5f)|| Physics.Raycast(rayRight, out ray2, 0.5f))
         {
             Debug.Log("ground");
             onFloor = true;
@@ -87,20 +88,37 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+   
 
-
-
-        if(Input.GetKey(KeyCode.D))
-        {
-            this.transform.Translate(new Vector3(moveSpeed, 0, 0 ));
-      
+        if (Input.GetKey(KeyCode.D)) {
+            velocity.x += xAccel;
         }
-        if (Input.GetKey(KeyCode.A))
-        {
-            this.transform.Translate(new Vector3(-moveSpeed, 0,0  ));
-
+        if (Input.GetKey(KeyCode.A)) {
+            velocity.x -= xAccel;
         }
-      
+
+        if (onFloor && Mathf.Abs(velocity.x) > 0 && !Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow)) {
+            if (Mathf.Abs(velocity.x) < floorFriction)
+                velocity.x = 0;
+            else
+                velocity.x -= Mathf.Sign(velocity.x) * floorFriction;
+        }
+
+        velocity.x = Mathf.Max(-xMaxSpd, Mathf.Min(velocity.x, xMaxSpd));
+
+        if (velocity.y > 0 && !Input.GetKey(KeyCode.Space))
+            velocity.y = 0;
+
+        if (jumpFlag) {
+            jumpFlag = false;
+            if (onFloor) {
+                velocity += Vector3.up * jumpSpd;
+            }
+        }
+
+
+
+        rb.MovePosition(myPos + velocity);
 
      
 
