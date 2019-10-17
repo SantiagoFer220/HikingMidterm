@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
 
 
         if (targetAmount <= 0 ){
-            endScreen.color = Color.Lerp(tranparent,black,1f);
+            endScreen.color = Color.Lerp(tranparent,black,0.9f);
             Debug.Log("fade");
         }
 
