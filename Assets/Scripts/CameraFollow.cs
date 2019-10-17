@@ -6,12 +6,12 @@ public class CameraFollow : MonoBehaviour
 {
    public Transform target;
 
-Vector3 offsetVector;
+public Vector3 offsetVector;
 
     // Start is called before the first frame update
     void Start()
     {
-       offsetVector = this.transform.position - target.position; 
+       offsetVector = this.transform.position; 
     }
 
     // Update is called once per frame
@@ -21,7 +21,7 @@ Vector3 offsetVector;
 
         // making the follow below better. Locks x and y pos of the camera.
         Vector3 newpos = target.position + offsetVector;
-        newpos.y = this.transform.position.y;
+        //newpos.y = this.transform.position.y;
         newpos.z = this.transform.position.z;
 
         //have camera interpolate between locations to improve feel

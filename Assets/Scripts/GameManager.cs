@@ -14,7 +14,12 @@ public class GameManager : MonoBehaviour
     float targetAmount; 
     float speed = 5f;
 
+    public float slowFactor;
 
+    public Image endScreen; 
+
+    public Color tranparent;
+    public Color black;
 
 
     // Start is called before the first frame update
@@ -41,5 +46,14 @@ public class GameManager : MonoBehaviour
         if (Mathf.Approximately(img.fillAmount, targetAmount)){
             img.fillAmount = targetAmount;
         }
+        
+        targetAmount -= Time.deltaTime/slowFactor;
+
+
+        if (targetAmount <= 0 ){
+            endScreen.color = Color.Lerp(tranparent,black,1f);
+            Debug.Log("fade");
+        }
+
     }
 }

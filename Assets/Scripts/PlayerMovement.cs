@@ -16,17 +16,33 @@ public class PlayerMovement : MonoBehaviour
 
     float maxDist = 0.4f;
 
-    public Vector3 velocity;
-    public float startVel;
-    Rigidbody rb;
-    AudioSource source;
-    Vector3 defPos;
+    
+    //VELOCITY STUFF
+    // public Vector3 velocity;
+    // public float startVel;
+
+    // AudioSource source;
+   
+    // public float grav = .01f;
+    // public float xAccel;
+    // public float xMaxSpd;
+    // public float floorFriction;
+    // public float maxJump;
+
+
+    //FLOOR CHECK
     public bool onFloor;
     public float jumpSpd;
-    public float grav = .01f;
-    public float xAccel;
-    public float xMaxSpd;
-    public float floorFriction;
+    public Vector3 newPos; 
+    public Vector3 changePos;
+    public float lerpPos; 
+     Vector3 defPos;
+    Rigidbody rb;
+
+    public GameObject legTwo; 
+    public float MaxDist;
+    public float upScale;
+
 
 
 
@@ -35,21 +51,32 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         defPos = transform.position;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-         if (Input.GetKey(KeyCode.Space))
-        {
-            jumpFlag = true;
+        
+        if (transform.position.x <= legTwo.transform.position.x + 2f){
+            if ( onFloor == true ||  jumpFlag == true && !Input.GetKey(KeyCode.E)){
+                if (Input.GetKey(KeyCode.Q))
+                {
+                this.transform.position = Vector3.Lerp(defPos,newPos,lerpPos);
+                newPos.x = newPos.x + 0.1f;
+                
 
-        }
-           
+                }
+            }
+        }     
     }
 
+    void OnCollisionEnter(){
+    newPos = transform.position + (Vector3.up * upScale); 
+    }
     void OnCollisionStay(){
         jumpFlag = true;
+        
     }
 
     void FixedUpdate()
@@ -58,11 +85,11 @@ public class PlayerMovement : MonoBehaviour
         BoxCollider box = GetComponent<BoxCollider>();
         Vector3 myPos = this.transform.position;
 
-        Ray rayLeft = new Ray (myPos + (Vector3.left) * (box.size.x /2f), Vector3.down);
-        Ray rayRight = new Ray (myPos + (Vector3.right) * (box.size.x /2f), Vector3.down);
+        Ray rayLeft = new Ray (myPos + (Vector3.left) * (box.size.x /(2.1f)), Vector3.down);
+        Ray rayRight = new Ray (myPos + (Vector3.right) * (box.size.x /2.1f), Vector3.down);
 
-        Debug.DrawRay(myPos + (Vector3.left) * (box.size.x /2f), Vector3.down, Color.cyan, maxDist);
-        Debug.DrawRay(myPos + (Vector3.right) * (box.size.x /2f), Vector3.down, Color.cyan, maxDist);
+        Debug.DrawRay(myPos + (Vector3.left) * ((box.size.x) /2.5f), Vector3.down, Color.cyan, maxDist);
+        Debug.DrawRay(myPos + (Vector3.right) * (box.size.x /(2.5f)), Vector3.down, Color.cyan, maxDist);
 
 
         RaycastHit ray = new RaycastHit();
@@ -75,51 +102,21 @@ public class PlayerMovement : MonoBehaviour
             onFloor = true;
         }else{
             onFloor= false; 
-            velocity.y -= grav;
-        }
-
-      
-       
-        if ( onFloor == true && jumpFlag == true){
-
-            if (Input.GetKey(KeyCode.Space)){
-                jumpFlag = false;
-                velocity += Vector3.up * jumpSpd;
-            }
+           
         }
 
    
 
         if (Input.GetKey(KeyCode.D)) {
-            velocity.x += xAccel;
+
+            this.transform.position = Vector3.Lerp(defPos,newPos,lerpPos);
         }
         if (Input.GetKey(KeyCode.A)) {
-            velocity.x -= xAccel;
+
+            
         }
 
-        if (onFloor && Mathf.Abs(velocity.x) > 0 && !Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow)) {
-            if (Mathf.Abs(velocity.x) < floorFriction)
-                velocity.x = 0;
-            else
-                velocity.x -= Mathf.Sign(velocity.x) * floorFriction;
-        }
-
-        velocity.x = Mathf.Max(-xMaxSpd, Mathf.Min(velocity.x, xMaxSpd));
-
-        if (velocity.y > 0 && !Input.GetKey(KeyCode.Space))
-            velocity.y = 0;
-
-        if (jumpFlag) {
-            jumpFlag = false;
-            if (onFloor) {
-                velocity += Vector3.up * jumpSpd;
-            }
-        }
-
-
-
-        rb.MovePosition(myPos + velocity);
-
+        
      
 
        
