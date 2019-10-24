@@ -5,18 +5,26 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
    public Transform target;
+   public Vector3 StartScreen;
+
+
 
 public Vector3 offsetVector;
 
     // Start is called before the first frame update
     void Start()
     {
-       offsetVector = this.transform.position; 
+     
+        offsetVector = this.transform.position; 
+      
     }
 
     // Update is called once per frame
     void Update()
     {
+       
+            
+        
         //this.transform.LookAt(target);
 
         // making the follow below better. Locks x and y pos of the camera.
@@ -36,6 +44,7 @@ public Vector3 offsetVector;
 
         //looks at position but not rotation. follows all positions. 
         //this.transform.position = target.position + offsetVector;
-
+        
+        
     }
 }

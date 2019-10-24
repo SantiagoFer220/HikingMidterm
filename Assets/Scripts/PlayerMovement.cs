@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed;
-    public float turnSpeed;
-    public float tierdness;
+    // public float moveSpeed;
+    // public float turnSpeed;
+    // public float tierdness;
 
     //public float ;
 
@@ -32,17 +32,20 @@ public class PlayerMovement : MonoBehaviour
 
     //FLOOR CHECK
     public bool onFloor;
-    public float jumpSpd;
+   // public float jumpSpd;
     public Vector3 newPos; 
-    public Vector3 changePos;
+  //  public Vector3 changePos;
     public float lerpPos; 
      Vector3 defPos;
     Rigidbody rb;
 
-    public GameObject legTwo; 
-    public float MaxDist;
+   public GameObject OtherLeg;
+     public float MaxDist;
     public float upScale;
-
+    public KeyCode Walk; 
+    public KeyCode OppositeLeg;
+    public PlayerMovement OtherLegScript;
+    public bool ThisLegUp;
 
 
 
@@ -51,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         defPos = transform.position;
+        OtherLegScript = OtherLeg.GetComponent<PlayerMovement>();
         
     }
 
@@ -58,23 +62,24 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         
-        if (transform.position.x <= legTwo.transform.position.x + 2f){
-            if ( onFloor == true ||  jumpFlag == true && !Input.GetKey(KeyCode.E)){
-                if (Input.GetKey(KeyCode.Q))
+        if (transform.position.x <= OtherLeg.transform.position.x + 2f && jumpFlag == true){
+            if ( onFloor == true ||  jumpFlag == true && !Input.GetKey(OppositeLeg) && !OtherLegScript.ThisLegUp){
+                if (Input.GetKey(Walk))
                 {
-                this.transform.position = Vector3.Lerp(defPos,newPos,lerpPos);
+                Debug.Log("move");
+                this.transform.position = Vector3.Lerp(defPos,newPos,(lerpPos+ Time.deltaTime/10));
                 newPos.x = newPos.x + 0.1f;
                 
-
                 }
             }
-        }     
+        }
     }
 
-    void OnCollisionEnter(){
+    void OnCollisionEnter(Collision collision){
     newPos = transform.position + (Vector3.up * upScale); 
+     
     }
-    void OnCollisionStay(){
+    void OnCollisionStay(Collision collision){
         jumpFlag = true;
         
     }
@@ -96,31 +101,16 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit ray2 = new RaycastHit();
 
 
-        if ( Physics.Raycast(rayLeft, out ray, 0.5f)|| Physics.Raycast(rayRight, out ray2, 0.5f))
+        if ( Physics.Raycast(rayLeft, out ray, MaxDist)|| Physics.Raycast(rayRight, out ray2, MaxDist))
         {
             Debug.Log("ground");
             onFloor = true;
+            ThisLegUp = false;
         }else{
+            Debug.Log("not ground");
             onFloor= false; 
-           
+            ThisLegUp = true; 
         }
-
-   
-
-        if (Input.GetKey(KeyCode.D)) {
-
-            this.transform.position = Vector3.Lerp(defPos,newPos,lerpPos);
-        }
-        if (Input.GetKey(KeyCode.A)) {
-
-            
-        }
-
-        
-     
-
-       
-
     }
 }
 
